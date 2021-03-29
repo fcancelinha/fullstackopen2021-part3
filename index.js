@@ -3,7 +3,7 @@ const app = express()
 
 const BASE_URL = `/api/persons`
 
-const persons = [
+let persons = [
     {
         "name": "Ada Lovelace",
         "number": "39-44-5323523",
@@ -48,6 +48,15 @@ app.get(`${BASE_URL}/:id`, (req, res) => {
 
     person ? res.json(person) : res.status(404).end()
 
+})
+
+
+app.delete(`${BASE_URL}/:id`, (req, res) => {
+
+    const resourceID = Number(req.params.id)
+    persons = persons.filter(({id}) => id !== resourceID)
+
+    res.status(204).end()
 })
 
 
