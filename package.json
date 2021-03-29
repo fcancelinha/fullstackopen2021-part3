@@ -1,0 +1,19 @@
+{
+  "name": "fullstackopen2021-part3",
+  "version": "1.0.0",
+  "description": "Fullstackopen part3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fcancelinha/fullstackopen2021-part3.git"
+  },
+  "author": "Filipe Cancelinha",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fcancelinha/fullstackopen2021-part3/issues"
+  },
+  "homepage": "https://github.com/fcancelinha/fullstackopen2021-part3#readme"
+}
