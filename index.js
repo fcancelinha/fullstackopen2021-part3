@@ -38,13 +38,22 @@ app.get(BASE_URL, (req, res) => {
             error: `No content available to send`
         })
 
-
     res.send(persons)
+})
+
+app.get(`${BASE_URL}/:id`, (req, res) => {
+
+    const resourceID = Number(req.params.id)
+    const person = persons.find(({id}) => id === resourceID)
+
+    person ? res.json(person) : res.status(404).end()
+
 })
 
 
 
 const PORT = 3001
+
 app.listen(PORT, () => {
     console.log(`Server is running on Port ${PORT}`)
 })
