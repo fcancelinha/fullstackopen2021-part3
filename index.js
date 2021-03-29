@@ -26,13 +26,22 @@ const persons = [
     }
 ]
 
-app.get('/', (req, res) => {
-    res.send('Hello World')
+
+app.get('/info', (req, res) => {
+    res.send(`<div> Phonebook has info for ${persons.length} <div> <br> <div> ${new Date()} <div>`)
 })
 
 app.get(BASE_URL, (req, res) => {
+
+    if(!persons)
+        return res.status(204).json({
+            error: `No content available to send`
+        })
+
+
     res.send(persons)
 })
+
 
 
 const PORT = 3001
