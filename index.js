@@ -1,5 +1,6 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 const app = express()
 
 
@@ -7,7 +8,11 @@ morgan.token('content', (req) => {
     return Object.keys(req.body).length ? '| ' + JSON.stringify(req.body) : ""
 })
 
-app.use(express.json(), morgan(':method :url :status :res[content-length] - :response-time ms :content'))
+app.use(
+    express.json(), 
+    morgan(':method :url :status :res[content-length] - :response-time ms :content'),
+    cors()
+    )
 
 
 const PORT = 3001
