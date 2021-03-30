@@ -1,13 +1,24 @@
 
 
-GET http://localhost:3001/api/persons
+GET http://localhost:3001/api/persons HTTP/1.1
 
 
 ###
-POST http://localhost:3001/api/persons
+POST http://localhost:3001/api/persons HTTP/1.1
 content-type: application/json
 
 {
     "name" : "test from rest extension",
+    "number" : "898-78-7874"
+}
+
+
+// request to test error handling
+###
+POST http://localhost:3001/api/persons HTTP/1.1
+content-type: application/json
+
+{
+    "name" : "Filipe Cancelinha",
     "number" : "898-78-7874"
 }

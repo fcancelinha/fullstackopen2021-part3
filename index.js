@@ -62,13 +62,23 @@ app.delete(`${BASE_URL}/:id`, (req, res) => {
 })
 
 
+const error = (res, error) => {
+    return res.status(400).json({ error })
+}
+
+
+
 app.post(`/api/persons`, (req, res) => {
     const body = req.body
 
-    if (!body) {
-        return res.status(400).json({
-            error: 'content missing'
-        })
+
+    console.log("test", )
+
+    switch(true){
+        case !body : return error(res, 'content missing')
+        case !body.name : return error(res, 'Name is missing from request')
+        case !body.number : return error(res, 'Number is missing from request')
+        case undefined !== persons.find(value => value.name === body.name) : return error(res, 'Names should be unique, there is already one such name')
     }
 
     const person = {
