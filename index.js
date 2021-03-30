@@ -1,9 +1,18 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
-app.use(express.json())
 
 
+morgan.token('content', (req) => {
+    return Object.keys(req.body).length ? '| ' + JSON.stringify(req.body) : ""
+})
+
+app.use(express.json(), morgan(':method :url :status :res[content-length] - :response-time ms :content'))
+
+
+const PORT = 3001
 const BASE_URL = `/api/persons`
+
 
 let persons = [
     {
@@ -71,9 +80,6 @@ const error = (res, error) => {
 app.post(`/api/persons`, (req, res) => {
     const body = req.body
 
-
-    console.log("test", )
-
     switch(true){
         case !body : return error(res, 'content missing')
         case !body.name : return error(res, 'Name is missing from request')
@@ -92,7 +98,7 @@ app.post(`/api/persons`, (req, res) => {
 })
 
 
-const PORT = 3001
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on Port ${PORT}`)
