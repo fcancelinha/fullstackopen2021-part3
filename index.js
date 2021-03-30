@@ -10,6 +10,7 @@ morgan.token('content', (req) => {
 
 app.use(
     express.json(), 
+    express.static('build'),
     morgan(':method :url :status :res[content-length] - :response-time ms :content'),
     cors()
     )
@@ -82,7 +83,7 @@ const error = (res, error) => {
 
 
 
-app.post(`/api/persons`, (req, res) => {
+app.post(`${BASE_URL}`, (req, res) => {
     const body = req.body
 
     switch(true){
@@ -101,8 +102,6 @@ app.post(`/api/persons`, (req, res) => {
     res.json(person)
 
 })
-
-
 
 
 app.listen(PORT, () => {
