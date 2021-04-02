@@ -16,12 +16,29 @@ morgan.token('content', (req) => {
     return Object.keys(req.body).length ? '| ' + JSON.stringify(req.body) : ""
 })
 
+
+const errorHandler = (error, request, response, next) => {
+    console.log(error.message)
+    mongoose.connection.close()
+
+    switch(error.message){
+        case 'CastError' : 
+            return response.status(400).send({error: 'invalid id, check format'})
+        default: 
+            next(error)
+    } 
+}
+
+
+//middleware
 app.use(
     express.json(), 
     express.static('build'),
     morgan(':method :url :status :res[content-length] - :response-time ms :content'),
-    cors()
+    cors(),
+    errorHandler
     )
+
 
 app.get('/info', (req, res) => {
 
@@ -31,28 +48,31 @@ app.get('/info', (req, res) => {
     })
     .catch((error) => {
         console.log(error)
+        next(error)
     })
     
 })
 
-app.get(BASE_URL, (req, res) => {
 
+app.get(BASE_URL, (req, res) => {
 
     Person.find({})
     .then(response => {
         console.log(response)
 
-        // if(!response.length)
-        //     return res.status(204).json({ error: `No content available to send` })
+        if(!response.length)
+            return res.status(204).json({ error: `No content available to send` })
 
         res.json(response)
         mongoose.connection.close()
 
     }).catch((error)=> {
         console.log(error)
+        next(error)
     })
    
 })
+
 
 app.get(`${BASE_URL}/:id`, (req, res) => {
 
@@ -73,11 +93,18 @@ app.delete(`${BASE_URL}/:id`, (req, res) => {
         .findByIdAndRemove(req.params.id)
         .then(response => {
 
-            res.status(204).end()
-            mongoose.connection.close()
+
+            if(response)
+                res.status(204).end()
+            else
+                res.status(404).send({error: 'Could not find entry with provided'})
+            
+            
+                mongoose.connection.close()
         })
         .catch(error => {
             console.log(error)
+            next(error)
         })
 
 })
@@ -86,6 +113,7 @@ app.delete(`${BASE_URL}/:id`, (req, res) => {
 const error = (res, error, code) => {
     return res.status(code).json({ error })
 }
+
 
 app.post(`${BASE_URL}`, (req, res) => {
     const body = req.body
@@ -107,8 +135,10 @@ app.post(`${BASE_URL}`, (req, res) => {
         })
         .catch((error) => {
             console.log(error)
+            next(error)
         })
 })
+
 
 
 app.listen(PORT, () => {
