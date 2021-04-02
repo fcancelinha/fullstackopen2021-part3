@@ -31,7 +31,7 @@ app.get('/info', (req, res) => {
     .catch((error) => {
         console.log(error)
     })
-
+    .finally(() =>  mongoose.connection.close())
     
 })
 
