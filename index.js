@@ -1,5 +1,8 @@
+
 //.env
 require('dotenv').config()
+const PORT = process.env.PORT || 3001
+const BASE_URL = `/api/persons`
 
 //imports
 const express = require('express')
@@ -19,36 +22,35 @@ app.use(
     cors()
     )
 
-
-const PORT = process.env.PORT || 3001
-const BASE_URL = `/api/persons`
-
-let phonebook = []
-
-
-Person.find({})
-      .then(response => {
-       
-          phonebook = response
-          console.log("response", response)
-          console.log("phonebook", phonebook)
-          console.log(Array.isArray(phonebook))
-      }).catch((error)=> {
-          console.log(error)
-      })
-
 app.get('/info', (req, res) => {
-    res.send(`<div> Phonebook has info for ${phonebook.length} <div> <br> <div> ${new Date()} <div>`)
+
+    Person.find({}).count().then(response => {
+        res.send(`<div> Phonebook has info for ${response} contacts <div> <br> <div> ${new Date()} <div>`)
+    })
+    .catch((error) => {
+        console.log(error)
+    })
+
+    
 })
 
 app.get(BASE_URL, (req, res) => {
 
-    if (!phonebook.length)
+
+    Person.find({})
+    .then(response => {
+        console.log(response)
+
+        if(!Array.of(response).length)
         return res.status(204).json({
             error: `No content available to send`
         })
 
-    res.json(phonebook)
+        res.json(response)
+
+    }).catch((error)=> {
+        console.log(error)
+    })
 })
 
 app.get(`${BASE_URL}/:id`, (req, res) => {
@@ -70,24 +72,30 @@ app.delete(`${BASE_URL}/:id`, (req, res) => {
 })
 
 
-const error = (res, error) => {
-    return res.status(400).json({ error })
+const error = (res, error, code) => {
+    return res.status(code).json({ error })
 }
-
-
 
 app.post(`${BASE_URL}`, (req, res) => {
     const body = req.body
 
     switch(true){
-        case !body : return error(res, 'content missing')
-        case !body.name : return error(res, 'Name is missing from request')
-        case !body.number : return error(res, 'Number is missing from request')
-        case undefined !== phonebook.find(value => value.name === body.name) : return error(res, 'Names should be unique, there is already one such name')
+        case !body : return error(res, 'content missing', 404)
+        case !body.name : return error(res, 'Name is missing from request', 400)
+        case !body.number : return error(res, 'Number is missing from request', 400)
+        // case undefined !== phonebook.find(value => value.name === body.name) : return error(res, 'Names should be unique, there is already one such name')
     }
 
-    phonebook.push(body)
-    res.json(phonebook)
+    const contact = new Person({ ...body })
+
+    contact
+        .save()
+        .then(response => {
+            res.json(response)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
 
 })
 
