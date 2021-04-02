@@ -12,13 +12,13 @@ mongoose
         console.log(error)
     })
 
-const personSchema = new mongoose.Schema({
+const peopleSchema = new mongoose.Schema({
     id: String,
     name: String,
     number: String
 })
 
-personSchema.set('JSON', {
+peopleSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
         delete returnedObject._id 
@@ -26,4 +26,4 @@ personSchema.set('JSON', {
     }
 })
 
-module.exports = mongoose.model('people', personSchema)
+module.exports = mongoose.model('people', peopleSchema)

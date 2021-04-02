@@ -27,11 +27,11 @@ app.get('/info', (req, res) => {
 
     Person.find({}).count().then(response => {
         res.send(`<div> Phonebook has info for ${response} contacts <div> <br> <div> ${new Date()} <div>`)
+        mongoose.connection.close()
     })
     .catch((error) => {
         console.log(error)
     })
-    .finally(() =>  mongoose.connection.close())
     
 })
 
@@ -42,17 +42,16 @@ app.get(BASE_URL, (req, res) => {
     .then(response => {
         console.log(response)
 
-        if(!Array.of(response).length)
-        return res.status(204).json({
-            error: `No content available to send`
-        })
+        // if(!response.length)
+        //     return res.status(204).json({ error: `No content available to send` })
 
         res.json(response)
+        mongoose.connection.close()
 
     }).catch((error)=> {
         console.log(error)
     })
-    .finally(() =>  mongoose.connection.close())
+   
 })
 
 app.get(`${BASE_URL}/:id`, (req, res) => {
@@ -67,10 +66,20 @@ app.get(`${BASE_URL}/:id`, (req, res) => {
 
 app.delete(`${BASE_URL}/:id`, (req, res) => {
 
-    const resourceID = Number(req.params.id)
-    phonebook = phonebook.filter(({ id }) => id !== resourceID)
 
-    res.status(204).end()
+    console.log("id to delete", req.params.id)
+
+    Person
+        .findByIdAndRemove(req.params.id)
+        .then(response => {
+
+            res.status(204).end()
+            mongoose.connection.close()
+        })
+        .catch(error => {
+            console.log(error)
+        })
+
 })
 
 
@@ -94,11 +103,11 @@ app.post(`${BASE_URL}`, (req, res) => {
         .save()
         .then(response => {
             res.json(response)
+            mongoose.connection.close()
         })
         .catch((error) => {
             console.log(error)
         })
-        .finally(() =>  mongoose.connection.close())
 })
 
 
