@@ -1,8 +1,12 @@
+//.env
+require('dotenv').config()
+
+//imports
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
-
+const Person = require('./models/person')
 
 morgan.token('content', (req) => {
     return Object.keys(req.body).length ? '| ' + JSON.stringify(req.body) : ""
@@ -19,48 +23,38 @@ app.use(
 const PORT = process.env.PORT || 3001
 const BASE_URL = `/api/persons`
 
-let persons = [
-    {
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523",
-        "id": 2
-    },
-    {
-        "name": "Dan Abramov",
-        "number": "12-43-234345",
-        "id": 3
-    },
-    {
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122",
-        "id": 4
-    },
-    {
-        "name": "Hyunjin Lee",
-        "number": "99-878-123",
-        "id": 6
-    }
-]
+let phonebook = []
 
+
+Person.find({})
+      .then(response => {
+       
+          phonebook = response
+          console.log("response", response)
+          console.log("phonebook", phonebook)
+          console.log(Array.isArray(phonebook))
+      }).catch((error)=> {
+          console.log(error)
+      })
 
 app.get('/info', (req, res) => {
-    res.send(`<div> Phonebook has info for ${persons.length} <div> <br> <div> ${new Date()} <div>`)
+    res.send(`<div> Phonebook has info for ${phonebook.length} <div> <br> <div> ${new Date()} <div>`)
 })
 
 app.get(BASE_URL, (req, res) => {
 
-    if (!persons)
+    if (!phonebook.length)
         return res.status(204).json({
             error: `No content available to send`
         })
 
-    res.send(persons)
+    res.json(phonebook)
 })
 
 app.get(`${BASE_URL}/:id`, (req, res) => {
 
     const resourceID = Number(req.params.id)
-    const person = persons.find(({ id }) => id === resourceID)
+    const person = phonebook.find(({ id }) => id === resourceID)
 
     person ? res.json(person) : res.status(404).end()
 
@@ -70,7 +64,7 @@ app.get(`${BASE_URL}/:id`, (req, res) => {
 app.delete(`${BASE_URL}/:id`, (req, res) => {
 
     const resourceID = Number(req.params.id)
-    persons = persons.filter(({ id }) => id !== resourceID)
+    phonebook = phonebook.filter(({ id }) => id !== resourceID)
 
     res.status(204).end()
 })
@@ -89,16 +83,11 @@ app.post(`${BASE_URL}`, (req, res) => {
         case !body : return error(res, 'content missing')
         case !body.name : return error(res, 'Name is missing from request')
         case !body.number : return error(res, 'Number is missing from request')
-        case undefined !== persons.find(value => value.name === body.name) : return error(res, 'Names should be unique, there is already one such name')
+        case undefined !== phonebook.find(value => value.name === body.name) : return error(res, 'Names should be unique, there is already one such name')
     }
 
-    const person = {
-        ...body,
-        id: Math.floor((Math.random() * (10000 - 1))),
-    }
-
-    persons.push(person)
-    res.json(person)
+    phonebook.push(body)
+    res.json(phonebook)
 
 })
 
