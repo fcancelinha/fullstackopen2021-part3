@@ -7,6 +7,7 @@ const BASE_URL = `/api/persons`
 //imports
 const express = require('express')
 const morgan = require('morgan')
+const mongoose = require('mongoose')
 const cors = require('cors')
 const app = express()
 const Person = require('./models/person')
@@ -51,6 +52,7 @@ app.get(BASE_URL, (req, res) => {
     }).catch((error)=> {
         console.log(error)
     })
+    .finally(() =>  mongoose.connection.close())
 })
 
 app.get(`${BASE_URL}/:id`, (req, res) => {
@@ -96,7 +98,7 @@ app.post(`${BASE_URL}`, (req, res) => {
         .catch((error) => {
             console.log(error)
         })
-
+        .finally(() =>  mongoose.connection.close())
 })
 
 
