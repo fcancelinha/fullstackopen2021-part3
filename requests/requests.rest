@@ -23,6 +23,26 @@ content-type: application/json
     "number" : "898-78-7874"
 }
 
+###
+POST http://localhost:3001/api/persons HTTP/1.1
+content-type: application/json
+
+{
+    "name" : "F",
+    "number" : "898-78-7874"
+}
+
+###
+POST http://localhost:3001/api/persons HTTP/1.1
+content-type: application/json
+
+{
+    "name" : "",
+    "number" : ""
+}
+
+
+
 //testing deployed application - Heroku
 ###
 GET https://boiling-stream-13455.herokuapp.com/api/persons HTTP/1.1

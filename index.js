@@ -15,18 +15,15 @@ const Person = require('./models/person')
 
 const errorHandler = (error, request, response, next) => {
     console.log(error.message)
-    // mongoose.connection.close()
-
+   
     switch (error.message) {
         case 'CastError':
             return response.status(400).send({ error: 'invalid id, check format' })
+        case 'ValidationError':
+            return response.status(400).send({error: error.message})
         default:
             next(error)
     }
-}
-
-const error = (res, error, code) => {
-    return res.status(code).json({ error })
 }
 
 
@@ -130,12 +127,12 @@ app.put(`${BASE_URL}/:id`, (req, res, next) => {
 app.post(`${BASE_URL}`, (req, res, next) => {
     const body = req.body
 
-    switch (true) {
-        case !body: return error(res, 'content missing', 404)
-        case !body.name: return error(res, 'Name is missing from request', 400)
-        case !body.number: return error(res, 'Number is missing from request', 400)
-        // case undefined !== phonebook.find(value => value.name === body.name) : return error(res, 'Names should be unique, there is already one such name')
-    }
+    // switch (true) {
+    //     case !body: return error(res, 'content missing', 404)
+    //     case !body.name: return error(res, 'Name is missing from request', 400)
+    //     case !body.number: return error(res, 'Number is missing from request', 400)
+    //     case undefined !== phonebook.find(value => value.name === body.name) : return error(res, 'Names should be unique, there is already one such name')
+    // }
 
     const contact = new Person({ ...body })
 
