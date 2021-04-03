@@ -13,7 +13,6 @@ mongoose
     })
 
 const peopleSchema = new mongoose.Schema({
-    id: String,
     name: String,
     number: String
 })

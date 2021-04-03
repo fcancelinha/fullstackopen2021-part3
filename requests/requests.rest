@@ -23,16 +23,6 @@ content-type: application/json
     "number" : "898-78-7874"
 }
 
-###
-DELETE http://localhost:3001/api/persons/ HTTP/1.1
-content-type: application/json
-
-{
-    "name" : "Filipe Cancelinha",
-    "number" : "898-78-7874"
-}
-
-
 //testing deployed application - Heroku
 ###
 GET https://boiling-stream-13455.herokuapp.com/api/persons HTTP/1.1
