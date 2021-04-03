@@ -79,10 +79,15 @@ app.get(BASE_URL, (req, res) => {
 
 app.get(`${BASE_URL}/:id`, (req, res) => {
 
-    const resourceID = Number(req.params.id)
-    const person = phonebook.find(({ id }) => id === resourceID)
-
-    person ? res.json(person) : res.status(404).end()
+    Person
+        .findOne({_id : req.params.id})
+        .then(response => {
+            if(response)
+                res.json(response)
+            else
+                res.status(404).send()
+        })
+        .catch(error => next(error))
 
 })
 
