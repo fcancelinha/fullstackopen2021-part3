@@ -108,7 +108,7 @@ app.delete(`${BASE_URL}/:id`, (req, res, next) => {
 app.put(`${BASE_URL}/:id`, (req, res, next) => {
 
     Person
-        .findByIdAndUpdate(req.params.id, req.params.body, {new: true})
+        .findByIdAndUpdate(req.params.id, req.params.body, {new: true, runValidators: true})
         .then(response => {
             console.log("put", response)
 
