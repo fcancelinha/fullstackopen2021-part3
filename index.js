@@ -2,33 +2,32 @@
 //.env
 require('dotenv').config()
 const PORT = process.env.PORT || 3001
-const BASE_URL = `/api/persons`
+const BASE_URL = '/api/persons'
 
 //imports
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
-const mongoose = require('mongoose')
 const cors = require('cors')
 const Person = require('./models/person')
 
 
 const errorHandler = (error, request, response, next) => {
     console.log(error.message)
-   
+
     switch (error.message) {
-        case 'CastError':
-            return response.status(400).send({ error: 'invalid id, check format' })
-        case 'ValidationError':
-            return response.status(400).send({error: error.message})
-        default:
-            next(error)
+    case 'CastError':
+        return response.status(400).send({ error: 'invalid id, check format' })
+    case 'ValidationError':
+        return response.status(400).send({ error: error.message })
+    default:
+        next(error)
     }
 }
 
 
 morgan.token('content', (req) => {
-    return Object.keys(req.body).length ? '| ' + JSON.stringify(req.body) : ""
+    return Object.keys(req.body).length ? '| ' + JSON.stringify(req.body) : ''
 })
 
 //middleware
@@ -41,18 +40,16 @@ app.use(
 )
 
 
-app.get('/info', (req, res) => {
+app.get('/info', (req, res, next) => {
 
     Person.find({}).count().then(response => {
         res.send(`<div> Phonebook has info for ${response} contacts <div> <br> <div> ${new Date()} <div>`)
     })
-        .catch((error) => {
+        .catch(error => {
             console.log(error)
             next(error)
         })
 
-
-  
 })
 
 
@@ -63,7 +60,7 @@ app.get(BASE_URL, (req, res) => {
             console.log(response)
 
             if (!response.length)
-                return res.status(204).json({ error: `No content available to send` })
+                return res.status(204).json({ error: 'No content available to send' })
 
             res.json(response)
 
@@ -74,10 +71,10 @@ app.get(BASE_URL, (req, res) => {
 })
 
 
-app.get(`${BASE_URL}/:id`, (req, res) => {
+app.get(`${BASE_URL}/:id`, (req, res, next) => {
 
     Person
-        .findOne({_id : req.params.id})
+        .findOne({ _id : req.params.id })
         .then(response => {
             if(response)
                 res.json(response)
@@ -91,12 +88,12 @@ app.get(`${BASE_URL}/:id`, (req, res) => {
 
 app.delete(`${BASE_URL}/:id`, (req, res, next) => {
 
-    console.log("id to delete", req.params.id)
-    console.log("id type", typeof req.params.id)
+    console.log('id to delete', req.params.id)
+    console.log('id type', typeof req.params.id)
 
     Person
         .findByIdAndRemove(req.params.id)
-        .then(response => {
+        .then(() => {
 
             res.status(204).end()
         })
@@ -108,15 +105,15 @@ app.delete(`${BASE_URL}/:id`, (req, res, next) => {
 app.put(`${BASE_URL}/:id`, (req, res, next) => {
 
     Person
-        .findByIdAndUpdate(req.params.id, req.params.body, {new: true, runValidators: true})
+        .findByIdAndUpdate(req.params.id, req.params.body, { new: true, runValidators: true })
         .then(response => {
-            console.log("put", response)
+            console.log('put', response)
 
             if(response)
                 res.json(response)
             else
-                res.status(404).send({error: 'Could not find entry with the id provided'})
-            
+                res.status(404).send({ error: 'Could not find entry with the id provided' })
+
         })
         .catch(error => next(error))
 

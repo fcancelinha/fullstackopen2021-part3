@@ -9,7 +9,7 @@ console.log(`connecting to mongodb using address ${url}`)
 
 mongoose
     .connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-    .then(response => {
+    .then(() => {
         console.log('connected to mongo successfully...')
     }).catch((error) => {
         console.log(error)

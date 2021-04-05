@@ -22,7 +22,7 @@ if (parNr === 3) {
     Person
         .find({})
         .then(result => {
-            console.log("\nphonebook:\n")
+            console.log('\nphonebook:\n')
             result.forEach(person => {
                 console.log(`${person.name} ${person.number}`)
             })
@@ -35,14 +35,14 @@ if (parNr === 3) {
         name: process.argv[3],
         number: process.argv[4]
     })
-    
-    console.log("number",process.argv[4])
+
+    console.log('number',process.argv[4])
     console.log(person)
 
     person
         .save()
         .then(result => {
-        console.log(`added ${result.name} number ${result.number} to the phonebook`)
-        mongoose.connection.close()
-    })
+            console.log(`added ${result.name} number ${result.number} to the phonebook`)
+            mongoose.connection.close()
+        })
 }
